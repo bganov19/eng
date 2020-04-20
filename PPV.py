@@ -5,11 +5,11 @@ from constants import *
 
 
 class PPV:
-    N_T = 5*10 ** 15
-    N_Sh = 5*10 ** 15
+    N_T = 5*10 ** 17
+    N_Sh = 6*10 ** 17
     u_ph = 5 * 10 ** 12
-    sigma_h = 10 ** (-15)
-    sigma_e = 10 ** (-21)
+    sigma_h = 10 ** (-13)
+    sigma_e = 10 ** (-16)
     E_HC = 0.35
     E_HE = 0.85
     E_EC = 0.1
@@ -64,6 +64,7 @@ class PPV:
         else:
             c0 = self.equilibrium()
 
+        print(self.equilibrium())
         time = np.linspace(0, lstime, int(lstime/dt))
         conc = [c0]
         h0 = self.p(c0) - self.n
