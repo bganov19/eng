@@ -153,7 +153,8 @@ class Root(tk.Tk):
         plt.subplot(1, 2, 1)
 
         if self.steadystate.get():
-            steadystates = [ppv.p(ppv.eq_state(t, ppv.n))-ppv.n for t in temperatures]
+            steadystates = [ppv.p0(ppv.eq_state(t, ppv.n))-ppv.n for t in temperatures]
+            print(ppv.eq_state(175, ppv.n))
             plt.scatter(temperatures, steadystates, label='steady state')
 
         plt.scatter(temperatures, finaloc, label='after '+self.lstentry.get()+' s LS')
