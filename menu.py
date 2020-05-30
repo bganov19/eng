@@ -142,19 +142,17 @@ class Root(tk.Tk):
         else:
             cooltemp = None
 
-        results = ppv.ls_wide_simulation(dt=float(self.dtentry.get()), Ti=float(self.tminentry.get()),
+        results = ppv.ls_wide_simulation(Ti=float(self.tminentry.get()),
                                          Tf=float(self.tmaxentry.get()), m=int(self.mentry.get()),
                                          T0=cooltemp, lstime=float(self.lstentry.get()))
 
         temperatures = np.linspace(int(self.tminentry.get()), int(self.tmaxentry.get()), int(self.mentry.get()))
         finaloc = [elem[-1] for elem in results]
-        time = np.arange(0, float(self.lstentry.get()), float(self.dtentry.get()))
 
         plt.subplot(1, 2, 1)
 
         if self.steadystate.get():
-            steadystates = [ppv.p0(ppv.eq_state(t, ppv.n))-ppv.n for t in temperatures]
-            print(ppv.eq_state(175, ppv.n))
+            steadystates = [ppv.eq_state(t) for t in temperatures]
             plt.scatter(temperatures, steadystates, label='steady state')
 
         plt.scatter(temperatures, finaloc, label='after '+self.lstentry.get()+' s LS')
@@ -169,15 +167,14 @@ class Root(tk.Tk):
 
         colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'lime', 'orange']
 
-        results = [elem[:np.size(time)] for elem in results]
-
         for table, temp, col in zip(results, temperatures, colors):
-            plt.plot(time, table, col, label=str(int(temp))+'K')
+            plt.plot(np.linspace(0, float(self.lstentry.get()), np.size(table)), table, col, label=str(int(temp))+'K')
+
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper right', borderaxespad=0.)
 
-        axcut = plt.axes([0.7, 0.9, 0.2, 0.075])
-        savebutton = Button(axcut, "Export to CSV")
-        savebutton.on_clicked(lambda x: Root.save_file(time, results, temperatures))
+        # axcut = plt.axes([0.7, 0.9, 0.2, 0.075])
+        # savebutton = Button(axcut, "Export to CSV")
+        # savebutton.on_clicked(lambda x: Root.save_file(np.linspace(0, float(self.lstentry.get()), np.size(results)), results, temperatures))
         plt.show()
 
     @staticmethod

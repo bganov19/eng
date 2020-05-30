@@ -1,27 +1,31 @@
 from PPV import *
 import matplotlib.pyplot as plt
 
-ppv = PPV(temp=100, light=10**11)
-p_ss = ppv.p0(ppv.eq_state(temp=100, light=10**11))
-holes = ppv.ls_simulation(dt=10**0, lstime=3600, T0=300)
-time = np.linspace(0, 3600, 3600)
+ppv = PPV(temp=150, light=10**16)
+p_ss = ppv.eq_state()
+
+holes = ppv.ls_simulation(dt=0.01, lstime=1, T0=300)
+time = np.linspace(0, 1, np.size(holes))
 
 p_dark = holes[0]
 dp = p_ss - p_dark
 
-ppv.E_EC = 0.1
-# print(p_ss)
+
+def kww(x, beta, tau):
+    return [p_ss - dp*exp(-(elem*tau)**beta) for elem in x]
 
 
-def F(t, beta): return [p_ss - dp*exp(-(elem*ppv.tEC())**beta) for elem in t]
+sigma_holes = [(p_ss - elem)/dp for elem in holes]
 
+# popt = sp.curve_fit(kww, time[1:], holes[1:], p0=(0.5, 1000), bounds=((0, 0), (1., np.inf)))
+# print(popt)
+print(holes[-1])
+print(p_ss)
 
-popt, pcov = sp.curve_fit(F, time, holes[:-1])
-print(popt)
-teo_curve = F(time, *popt)
-
-plt.plot(time, holes[:-1])
-plt.plot(time, teo_curve, 'r')
+plt.plot(time[1:], holes[1:])
+# plt.plot(time[1:], sigma_holes[1:])
+# plt.plot(time, (p_ss - kww(time, popt[0][0], popt[0][1]))/dp, 'r')
 plt.yscale('log')
+plt.xlabel("t")
+plt.ylabel('$\Phi$(t)')
 plt.show()
-
